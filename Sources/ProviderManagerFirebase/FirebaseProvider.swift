@@ -5,7 +5,7 @@
 //  Created by Yagiz Nizipli on 9/9/20.
 //
 
-#if canImport(Firebase)
+import ProviderManager
 import Firebase
 
 public class FirebaseProvider : BaseProvider<Firebase.Analytics>, AnalyticsProvider {
@@ -271,4 +271,3 @@ extension FirebaseProvider: MessagingDelegate, UNUserNotificationCenterDelegate 
                                     userInfo: ["token": fcmToken])
   }
 }
-#endif
