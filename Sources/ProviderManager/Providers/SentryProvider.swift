@@ -6,9 +6,9 @@
 //
 
 #if canImport(Sentry)
-import Sentry
 
 public class SentryProvider : BaseProvider<SentrySDK>, AnalyticsProvider {
+  
   private let options: Options
   
   public struct Options {
@@ -30,7 +30,7 @@ public class SentryProvider : BaseProvider<SentrySDK>, AnalyticsProvider {
     ])
   }
   
-  public override func event(_ event: FruitAnalyticsEvent) {
+  public override func event(_ event: AnalyticsEvent) {
     guard let event = update(event: event) else {
       return
     }
@@ -42,7 +42,7 @@ public class SentryProvider : BaseProvider<SentrySDK>, AnalyticsProvider {
     }
   }
   
-  public override func update(event: FruitAnalyticsEvent) -> FruitAnalyticsEvent? {
+  public override func update(event: AnalyticsEvent) -> AnalyticsEvent? {
     guard (event.properties?.keys.contains(Property.ExceptionHandler.error.rawValue)) != nil  else { return nil }
     return event
   }
@@ -51,5 +51,19 @@ public class SentryProvider : BaseProvider<SentrySDK>, AnalyticsProvider {
     SentrySDK.setUser(.init(userId: userId))
   }
 }
+
+extension SentryProvider {
+  
+  public func flush() {}
+  
+  public func reset() {}
+  
+  public func alias(userId: String, forId: String) {}
+  
+  public func set(properties: Properties) {}
+  
+  public func increment(property: String, by number: NSDecimalNumber) {}
+}
+
 
 #endif

@@ -7,8 +7,6 @@
 
 #if canImport(UXCam)
 
-import UXCam
-
 public class UXCamProvider : BaseProvider<UXCam>, AnalyticsProvider {
   
   private let options: Options
@@ -33,7 +31,7 @@ public class UXCamProvider : BaseProvider<UXCam>, AnalyticsProvider {
     UXCam.start(withKey: options.apiKey)
   }
   
-  public override func event(_ event: FruitAnalyticsEvent) {
+  public override func event(_ event: AnalyticsEvent) {
     guard let event = update(event: event) else {
       return
     }
@@ -53,12 +51,24 @@ public class UXCamProvider : BaseProvider<UXCam>, AnalyticsProvider {
       set(properties: properties)
     }
   }
-    
+  
   public func set(properties: Properties) {
     for (property, value) in properties {
       UXCam.setUserProperty(property, value: value)
     }
   }
 }
+
+extension UXCamProvider {
+  
+  public func flush() {}
+  
+  public func reset() {}
+  
+  public func alias(userId: String, forId: String) {}
+  
+  public func increment(property: String, by number: NSDecimalNumber) {}
+}
+
 
 #endif

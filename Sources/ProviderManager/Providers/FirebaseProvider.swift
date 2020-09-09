@@ -5,8 +5,11 @@
 //  Created by Yagiz Nizipli on 9/9/20.
 //
 
+#if canImport(Firebase)
+
 import ProviderManager
 import Firebase
+import FirebaseMessaging
 
 public class FirebaseProvider : BaseProvider<Firebase.Analytics>, AnalyticsProvider {
   
@@ -15,7 +18,7 @@ public class FirebaseProvider : BaseProvider<Firebase.Analytics>, AnalyticsProvi
     Messaging.messaging().delegate = self
   }
   
-  public override func event(_ event: FruitAnalyticsEvent) {
+  public override func event(_ event: AnalyticsEvent) {
     guard let event = update(event: event) else {
       return
     }
@@ -23,9 +26,6 @@ public class FirebaseProvider : BaseProvider<Firebase.Analytics>, AnalyticsProvi
     switch event.type {
     case .default, .purchase:
       Analytics.logEvent(event.name, parameters: mergeGlobal(properties: event.properties, overwrite: true))
-    case .screen:
-      let className = Track.Screen(rawValue: event.name)?.className
-      Analytics.setScreenName(event.name, screenClass: className)
     case .finishTime:
       super.event(event)
       
@@ -34,7 +34,7 @@ public class FirebaseProvider : BaseProvider<Firebase.Analytics>, AnalyticsProvi
       super.event(event)
     }
     
-    delegate?.analyticsProviderDidSendEvent(self, event: event)
+    delegate?.providerDidSendEvent(self, event: event)
   }
   
   public func flush() {}
@@ -155,8 +155,6 @@ public class FirebaseProvider : BaseProvider<Firebase.Analytics>, AnalyticsProvi
       return AnalyticsEventSignUp
     case .spendCredits:
       return AnalyticsEventSpendVirtualCurrency
-    case .beginTutorial:
-      return AnalyticsEventTutorialBegin
     case .unlockedAchievement:
       return AnalyticsEventUnlockAchievement
     case .viewItem:
@@ -271,3 +269,5 @@ extension FirebaseProvider: MessagingDelegate, UNUserNotificationCenterDelegate 
                                     userInfo: ["token": fcmToken])
   }
 }
+
+#endif

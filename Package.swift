@@ -13,17 +13,12 @@ let package = Package(
   products: [
     .library(
       name: "ProviderManager",
-      targets: ["ProviderManager"]),
-    .library(
-      name: "ProviderManagerFirebase",
-      type: .dynamic,
-      targets: ["ProviderManagerFirebase"])
+      targets: ["ProviderManager"])
   ],
   dependencies: [],
   targets: [
-    .target(name: "ProviderManager",
-            dependencies: []),
-    .target(name: "ProviderManagerFirebase",
-            dependencies: ["ProviderManager"])
+    .target(
+      name: "ProviderManager",
+      dependencies: [])
   ]
 )

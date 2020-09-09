@@ -6,9 +6,8 @@
 //
 
 #if canImport(Mixpanel)
-import Mixpanel
 
-public class MixpanelProvider : BaseProvider<MixpanelInstance>, AnalyticsProvider {
+public class MixpanelProvider : BaseProvider<Mixpanel>, AnalyticsProvider {
   public struct Options {
     var token: String
   }
@@ -22,7 +21,11 @@ public class MixpanelProvider : BaseProvider<MixpanelInstance>, AnalyticsProvide
   }
   
   public func setup(with properties: Properties?) {
-    instance = Mixpanel.initialize(token: options.token)
+    instance = Mixpanel.init(token: options.token,
+                             launchOptions: properties,
+                             flushInterval: 30,
+                             trackCrashes: true,
+                             automaticPushTracking: true)
   }
   
   public func flush() {
@@ -33,32 +36,32 @@ public class MixpanelProvider : BaseProvider<MixpanelInstance>, AnalyticsProvide
     instance.reset()
   }
   
-  public override func event(_ event: FruitAnalyticsEvent) {
+  public override func event(_ event: AnalyticsEvent) {
     guard let event = update(event: event) else {
       return
     }
     
     switch event.type {
     case .default, .screen, .finishTime:
-      instance.track(event: event.name, properties: event.properties as? [String : MixpanelType])
+      instance.track(event.name, properties: event.properties as? [String: MixpanelType])
     case .time:
       super.event(event)
-      instance.time(event: event.name)
+      instance.timeEvent(event.name)
     case .purchase:
       guard let amount = event.properties?[Property.Purchase.price.rawValue] as? NSDecimalNumber else {
         return
       }
-      instance.track(event: event.name, properties: event.properties as? [String: MixpanelType])
-      instance.people.trackCharge(amount: amount.doubleValue, properties: event.properties as? [String : MixpanelType])
+      instance.track(event.name, properties: event.properties as? [String: MixpanelType])
+      instance.people.trackCharge(amount, withProperties: event.properties as? [String : MixpanelType])
     default:
       super.event(event)
     }
     
-    delegate?.analyticsProviderDidSendEvent(self, event: event)
+    delegate?.providerDidSendEvent(self, event: event)
   }
   
   public func identify(userId: String, properties: Properties? = nil) {
-    instance.identify(distinctId: userId)
+    instance.identify(userId)
     
     if let properties = properties {
       set(properties: properties)
@@ -66,7 +69,7 @@ public class MixpanelProvider : BaseProvider<MixpanelInstance>, AnalyticsProvide
   }
   
   public func alias(userId: String, forId: String) {
-    instance.createAlias(userId, distinctId: forId)
+    instance.createAlias(userId, forDistinctID: forId, usePeople: true)
   }
   
   public func set(properties: Properties) {
@@ -74,7 +77,7 @@ public class MixpanelProvider : BaseProvider<MixpanelInstance>, AnalyticsProvide
       return
     }
     
-    instance.people.set(properties: properties)
+    instance.people.set(properties)
   }
   
   public override func global(properties: Properties, overwrite: Bool) {
@@ -90,7 +93,7 @@ public class MixpanelProvider : BaseProvider<MixpanelInstance>, AnalyticsProvide
   }
   
   public func increment(property: String, by number: NSDecimalNumber) {
-    instance.people.increment(property: property, by: number.doubleValue)
+    instance.people.increment(property, by: number)
   }
   
   
@@ -128,8 +131,11 @@ public class MixpanelProvider : BaseProvider<MixpanelInstance>, AnalyticsProvide
     return finalProperties
   }
   
-  public func push(payload: [AnyHashable : Any], event: EventName?) {
-    instance.trackPushNotification(payload, event)
+  public override func push(payload: [AnyHashable : Any], event: EventName?) {
+    if let event = event {
+      instance.trackPushNotification(payload, event: event, properties: [:])
+    }
   }
 }
+
 #endif

@@ -6,8 +6,9 @@
 //
 
 #if canImport(Adjust)
+
 import Adjust
-import Foundation
+import ProviderManager
 
 open class AdjustProvider : BaseProvider<Adjust>, AnalyticsProvider {
   
@@ -72,7 +73,7 @@ open class AdjustProvider : BaseProvider<Adjust>, AnalyticsProvider {
     instance.setPushToken(token)
   }
   
-  open override func event(_ event: FruitAnalyticsEvent) {
+  open override func event(_ event: AnalyticsEvent) {
     guard let event = update(event: event) else {
       return
     }
@@ -108,8 +109,7 @@ open class AdjustProvider : BaseProvider<Adjust>, AnalyticsProvider {
   }
   
   open override func update(event: AnalyticsEvent) -> AnalyticsEvent? {
-    guard let name = Track.Event(rawValue: event.name)?.adjustId else { return nil }
-    return FruitAnalyticsEvent(type: event.type, name: name, properties: event.properties)
+    AnalyticsEvent(type: event.type, name: event.internalId ?? "", properties: event.properties)
   }
   
   public func alias(userId: String, forId: String) { }
