@@ -23,10 +23,12 @@ public struct AnalyticsEvent {
   public var type = EventType.default
   public var name : EventName
   public var properties : Properties?
+  public var internalId: String?
   
-  public init(type: EventType, name: EventName, properties: Properties? = nil) {
+  public init(type: EventType, name: EventName, properties: Properties? = nil, internalId: String? = nil) {
     self.type = type
     self.name = name
     self.properties = properties
+    self.internalId = internalId
   }
 }
