@@ -61,9 +61,9 @@ open class AdjustProvider : BaseProvider<Adjust>, AnalyticsProvider {
   
   open override func activate() { }
   
-  open func flush() { }
+  open func flush() {}
   
-  open func reset() { }
+  open func reset() {}
   
   open override func addDevice(token: Data) {
     instance.setDeviceToken(token)
@@ -74,10 +74,6 @@ open class AdjustProvider : BaseProvider<Adjust>, AnalyticsProvider {
   }
   
   open override func event(_ event: AnalyticsEvent) {
-    guard let event = update(event: event) else {
-      return
-    }
-    
     guard let eventObject = getAdjustEvent(for: event) else {
       return
     }
@@ -93,8 +89,8 @@ open class AdjustProvider : BaseProvider<Adjust>, AnalyticsProvider {
   }
   
   private func getAdjustEvent(for analyticsEvent: AnalyticsEvent) -> ADJEvent? {
-    guard let identifier = analyticsEvent.properties?[Property.Purchase.identifier.rawValue] as? String else { return nil }
-
+    guard let identifier = analyticsEvent.properties?[Property.identifier.rawValue] as? String else { return nil }
+    
     let event = ADJEvent(eventToken: identifier)
     
     if let price = (analyticsEvent.properties?[Property.Purchase.price.rawValue] as? NSDecimalNumber)?.doubleValue, let currency = analyticsEvent.properties?[Property.Purchase.currency.rawValue] as? String {
@@ -106,10 +102,6 @@ open class AdjustProvider : BaseProvider<Adjust>, AnalyticsProvider {
     }
     
     return event
-  }
-  
-  open override func update(event: AnalyticsEvent) -> AnalyticsEvent? {
-    AnalyticsEvent(type: event.type, name: event.internalId ?? "", properties: event.properties)
   }
   
   public func alias(userId: String, forId: String) { }
@@ -155,4 +147,5 @@ extension AdjustProvider: AdjustDelegate {
     return true
   }
 }
+
 #endif

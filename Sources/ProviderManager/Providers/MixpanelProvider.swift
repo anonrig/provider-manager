@@ -7,6 +7,8 @@
 
 #if canImport(Mixpanel)
 
+import Mixpanel
+
 public class MixpanelProvider : BaseProvider<Mixpanel>, AnalyticsProvider {
   public struct Options {
     var token: String

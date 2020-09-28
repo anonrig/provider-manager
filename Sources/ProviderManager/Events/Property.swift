@@ -8,6 +8,8 @@
 import Foundation
 
 public enum Property : String {
+  case identifier
+  
   case type
   case time
   case success
