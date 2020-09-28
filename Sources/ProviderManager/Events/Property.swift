@@ -23,6 +23,8 @@ public enum Property : String {
   }
   
   public enum Purchase : String {
+    case identifier
+    
     case category
     case affiliation
     case country

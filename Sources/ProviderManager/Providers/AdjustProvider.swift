@@ -83,7 +83,7 @@ open class AdjustProvider : BaseProvider<Adjust>, AnalyticsProvider {
     }
     
     switch event.type {
-    case .default, .finishTime, .purchase:
+    case .default, .finishTime:
       instance.trackEvent(eventObject)
     default:
       super.event(event)
@@ -93,14 +93,12 @@ open class AdjustProvider : BaseProvider<Adjust>, AnalyticsProvider {
   }
   
   private func getAdjustEvent(for analyticsEvent: AnalyticsEvent) -> ADJEvent? {
-    guard let identifier = analyticsEvent.internalId else { return nil }
+    guard let identifier = analyticsEvent.properties?[Property.Purchase.identifier.rawValue] as? String else { return nil }
 
     let event = ADJEvent(eventToken: identifier)
     
-    if analyticsEvent.type == .purchase {
-      if let price = (analyticsEvent.properties?[Property.Purchase.price.rawValue] as? NSDecimalNumber)?.doubleValue, let currency = analyticsEvent.properties?[Property.Purchase.currency.rawValue] as? String {
-        event?.setRevenue(price, currency: currency)
-      }
+    if let price = (analyticsEvent.properties?[Property.Purchase.price.rawValue] as? NSDecimalNumber)?.doubleValue, let currency = analyticsEvent.properties?[Property.Purchase.currency.rawValue] as? String {
+      event?.setRevenue(price, currency: currency)
     }
     
     if let transactionId = analyticsEvent.properties?[Property.Purchase.transactionId.rawValue] as? String {

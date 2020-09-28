@@ -130,7 +130,7 @@ public extension AnalyticsProvider {
   }
   
   func event(name: EventName, properties: Properties? = nil, internalId: String? = nil) {
-    event(AnalyticsEvent(type: .default, name: name, properties: properties, internalId: internalId))
+    event(AnalyticsEvent(type: .default, name: name, properties: properties))
   }
   
   func screen(name: EventName, properties: Properties? = nil) {

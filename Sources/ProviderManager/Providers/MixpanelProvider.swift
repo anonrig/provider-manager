@@ -44,15 +44,13 @@ public class MixpanelProvider : BaseProvider<Mixpanel>, AnalyticsProvider {
     switch event.type {
     case .default, .screen, .finishTime:
       instance.track(event.name, properties: event.properties as? [String: MixpanelType])
+      
+      if let amount = event.properties?[Property.Purchase.price.rawValue] as? NSDecimalNumber {
+        instance.people.trackCharge(amount, withProperties: event.properties as? [String : MixpanelType])
+      }
     case .time:
       super.event(event)
       instance.timeEvent(event.name)
-    case .purchase:
-      guard let amount = event.properties?[Property.Purchase.price.rawValue] as? NSDecimalNumber else {
-        return
-      }
-      instance.track(event.name, properties: event.properties as? [String: MixpanelType])
-      instance.people.trackCharge(amount, withProperties: event.properties as? [String : MixpanelType])
     default:
       super.event(event)
     }

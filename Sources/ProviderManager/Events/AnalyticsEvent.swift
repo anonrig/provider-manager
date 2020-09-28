@@ -16,19 +16,16 @@ public struct AnalyticsEvent {
     case screen
     case time
     case finishTime
-    case purchase
     case error
   }
   
   public var type = EventType.default
   public var name : EventName
   public var properties : Properties?
-  public var internalId: String?
   
-  public init(type: EventType, name: EventName, properties: Properties? = nil, internalId: String? = nil) {
+  public init(type: EventType, name: EventName, properties: Properties? = nil) {
     self.type = type
     self.name = name
     self.properties = properties
-    self.internalId = internalId
   }
 }

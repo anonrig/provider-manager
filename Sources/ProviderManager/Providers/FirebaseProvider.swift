@@ -24,7 +24,7 @@ public class FirebaseProvider : BaseProvider<Firebase.Analytics>, AnalyticsProvi
     }
     
     switch event.type {
-    case .default, .purchase:
+    case .default:
       Analytics.logEvent(event.name, parameters: mergeGlobal(properties: event.properties, overwrite: true))
     case .finishTime:
       super.event(event)
