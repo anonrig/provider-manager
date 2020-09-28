@@ -125,16 +125,12 @@ public extension AnalyticsProvider {
     ]))
   }
   
-  func event(_ defaultEvent: DefaultEvent, properties: Properties? = nil) {
-    event(name: defaultEvent.rawValue, properties: properties)
+  func event(_ defaultEvent: DefaultEvent, properties: Properties? = nil, internalId: String? = nil) {
+    event(name: defaultEvent.rawValue, properties: properties, internalId: internalId)
   }
   
-  func event(name: EventName, properties: Properties? = nil) {
-    event(AnalyticsEvent(type: .default, name: name, properties: properties))
-  }
-  
-  func purchase(name: EventName, properties: Properties? = nil) {
-    event(AnalyticsEvent(type: .purchase, name: name, properties: properties))
+  func event(name: EventName, properties: Properties? = nil, internalId: String? = nil) {
+    event(AnalyticsEvent(type: .default, name: name, properties: properties, internalId: internalId))
   }
   
   func screen(name: EventName, properties: Properties? = nil) {
