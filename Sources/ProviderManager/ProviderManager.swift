@@ -6,7 +6,7 @@
 //
 
 import ObjectiveC
-import UIKit
+import SwiftUI
 
 open class ProviderManager : AnalyticsProvider {
   private static let DeviceKey = "AnalyticsDeviceKey"
@@ -18,6 +18,7 @@ open class ProviderManager : AnalyticsProvider {
   public private(set) var providers : [AnalyticsProvider] = []
   
   public var deviceId : String {
+    #if !os(watchOS) && !os(macOS)
     if let advertisingIdentifier = advertisingIdentifier?.uuidString {
       return advertisingIdentifier
     }
@@ -31,11 +32,10 @@ open class ProviderManager : AnalyticsProvider {
       
       return id
     }
+    #endif
     
     let id = ProviderManager.randomId()
-    
     userDefaults.set(id, forKey: ProviderManager.DeviceKey)
-    
     return id
   }
   
@@ -48,6 +48,7 @@ open class ProviderManager : AnalyticsProvider {
   /// - Parameters:
   ///   - application: UIApplication instance
   ///   - launchOptions: launch options
+  #if !os(watchOS) && !os(macOS)
   open func setup(with application: UIApplication?, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
     var properties : Properties = [:]
     
@@ -61,6 +62,7 @@ open class ProviderManager : AnalyticsProvider {
     
     setup(with: properties)
   }
+  #endif
   
   public func provider<T : AnalyticsProvider>(ofType type: T.Type) -> T? {
     return providers.filter { return ($0 is T) }.first as? T
