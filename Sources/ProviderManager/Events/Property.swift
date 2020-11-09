@@ -82,6 +82,7 @@ public enum Property : String {
     
     case level
     case registrationMethod
+    case segmentation
   }
   
   public enum Location : String {
